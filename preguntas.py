@@ -8,11 +8,11 @@ Utilice los archivos `tbl0.tsv`, `tbl1.tsv` y `tbl2.tsv`, para resolver las preg
 
 """
 import pandas as pd
+import datetime
 
 tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
 tbl1 = pd.read_csv("tbl1.tsv", sep="\t")
 tbl2 = pd.read_csv("tbl2.tsv", sep="\t")
-
 
 def pregunta_01():
     """
@@ -22,7 +22,8 @@ def pregunta_01():
     40
 
     """
-    return
+    rows=tbl0.shape[0]
+    return rows
 
 
 def pregunta_02():
@@ -33,7 +34,8 @@ def pregunta_02():
     4
 
     """
-    return
+    cols=tbl0.shape[1]
+    return cols
 
 
 def pregunta_03():
@@ -50,7 +52,8 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    Count_regis=tbl0.groupby('_c1')['_c1'].count()
+    return Count_regis
 
 
 def pregunta_04():
@@ -65,7 +68,8 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    Mean_regis=tbl0.groupby("_c1")["_c2"].mean()
+    return Mean_regis
 
 
 def pregunta_05():
@@ -82,7 +86,8 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    Max_regis=tbl0.groupby("_c1")["_c2"].max()
+    return Max_regis
 
 
 def pregunta_06():
@@ -94,7 +99,10 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    val_only=tbl1["_c4"].unique()
+    val_only=sorted(val_only)
+    val_only=[x.upper() for x in val_only]
+    return val_only
 
 
 def pregunta_07():
@@ -110,7 +118,10 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+
+    Sum_regis=tbl0.groupby("_c1")["_c2"].sum()
+
+    return Sum_regis
 
 
 def pregunta_08():
@@ -128,7 +139,11 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    suma={"suma":tbl0["_c0"]+tbl0["_c2"]}
+    suma=pd.DataFrame(data=suma)
+    tbl0_suma=pd.concat([tbl0,suma,],axis=1)
+
+    return tbl0_suma
 
 
 def pregunta_09():
@@ -146,7 +161,12 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+
+    Y=tbl0.copy()
+    Y_date=Y['_c3']
+    Y["year"]=Y_date.str[0:4]
+
+    return Y
 
 
 def pregunta_10():
@@ -163,7 +183,10 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    C12=tbl0.groupby("_c1")["_c2"]
+    Answer=C12.apply(lambda cols: ':'.join(sorted([str(i) for i in cols])))
+
+    return pd.DataFrame(Answer)
 
 
 def pregunta_11():
@@ -182,7 +205,11 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    c04=tbl1.groupby("_c0")["_c4"]
+    c4=c04.apply(lambda cols: ','.join(sorted([str(i) for i in cols])))
+    Answer={"_c0":list(range(c4.shape[0])),"_c4":list(c4)}
+
+    return pd.DataFrame(Answer)
 
 
 def pregunta_12():
@@ -200,7 +227,17 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    Table=tbl2.copy()
+    c5a=Table["_c5a"]
+    c5b=Table["_c5b"]
+    rows=range(Table.shape[0])
+    Table["_c5"]=[(c5a[i]+":"+str(c5b[i])) for i in rows]
+    
+    c05=Table.groupby("_c0")["_c5"]
+    c5=c05.apply(lambda cols: ','.join(sorted([str(i) for i in cols])))
+    Answer={"_c0":list(range(c5.shape[0])),"_c5":list(c5)}
+
+    return pd.DataFrame(Answer)
 
 
 def pregunta_13():
@@ -217,4 +254,10 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    c05b=tbl2.groupby("_c0")["_c5b"].sum()
+    tbl0["_c5b"]=list(c05b)
+
+    Answer=tbl0.groupby("_c1")["_c5b"].sum()
+    return Answer
+
+print(pregunta_03())
