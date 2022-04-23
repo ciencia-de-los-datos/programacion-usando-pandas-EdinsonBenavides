@@ -52,7 +52,7 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    Count_regis=tbl0["_c1"].value_counts()
+    Count_regis=tbl0.groupby('_c1')['_c1'].count()
     return Count_regis
 
 
@@ -260,3 +260,4 @@ def pregunta_13():
     Answer=tbl0.groupby("_c1")["_c5b"].sum()
     return Answer
 
+print(pregunta_03())
